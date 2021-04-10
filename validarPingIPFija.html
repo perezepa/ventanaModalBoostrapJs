@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Validar Ping IP Fija</title>
+  <meta charset="UTF-8">
+
+  <!-- Archivos cdn: script y css -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+  <!-- Section -->
+  <section class="container">
+    <h1 class="text-muted">Ventana Modal para Generar URL</h1>
+    <div class="row add-bottom text-center">
+      <a href="#validarPingIPFija_PopupSlider" id="validarPingIPFija" data-toggle="modal">Da click aqui para mostrar ayuda</a> <!-- style="visibility: hidden; display:none;" -->
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal" style="top:-3%" align="center" id="validarPingIPFija_PopupSlider" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 70%; height: 40%;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">INGRESAR DIRECCION IP</h4>
+          <!-- <button class="close" data-dismiss="modal" aria-label="Cerrar" id="btn-cerrar-popup" onclick="return resetearFormulario(event);";>
+          <span aria-hidden="true">&times;</span>
+          </button> -->
+        </div>
+        <div class="modal-body">
+            <div class="alert alert-light"><h6><strong>Copiar URL Generada y pegarla en el Navegador de su Preferencia</strong></h6><br>
+               <form action="#" method="POST" id="formulario" onsubmit="return false";>
+                  <div>
+                    <input class="form-control" type="text" placeholder="Direccion IP" id="nombreIp" value="" onkeypress="return soloenteros(event);";>
+                    <input type="text" id="urlPrincipal" value="https://www.google.com"><br>
+                    <span id="error_nombreIp" class="text-danger"></span>
+                  </div>
+                  <button class="btn btn-primary" type="button" disabled id="spinner" style="display: none">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Loading...
+                  </button>
+                  <p id="urlConcatIp"><strong>URL: </strong> <span></span></p><br>
+                
+                  <input type="submit" class="btn btn-primary" id="btn-submit" value="Generar URL"/>
+              </form>
+            </div>
+        </div>
+        <!-- End modal-body --> 
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal" id="btn-cerrar-popup" onclick="return resetearFormulario(event);";>Cerrar</button>
+        </div>
+      </div>
+      <!-- End modal-content --> 
+    </div>
+    <!-- End modal-dialog -->
+  </div>
+  <!-- End modal -->
+
+  <!---------------- Codigo JavaScript ---------------->
+<script>      
+
+  // Variables
+  const btnCerrar = document.querySelector("#btn-cerrar-popup");
+  const btnSubmit = document.querySelector('#btn-submit');
+  
+  // Variables para Campos
+  var nombreIp = document.querySelector("#nombreIp");
+  var formulario = document.querySelector("#formulario");
+  var inputUrlPrincipal = document.querySelector("#urlPrincipal");
+  inputUrlPrincipal.style.display = "none";
+  var spanurlConcatIp = document.querySelector("#urlConcatIp");
+  spanurlConcatIp.style.display = "none";
+  
+  // Event Listeners
+  eventListeners();
+  function eventListeners() {
+  // Campos del Formulario
+    console.log('App Lista');
+    document.addEventListener('DOMContentLoaded', iniciarApp);	
+    nombreIp.addEventListener('onkeypress', soloenteros);
+    formulario.addEventListener('submit', validarFormulario);
+    btnCerrar.addEventListener('onclick', resetearFormulario);
+  }
+  
+  // Funciones
+  function iniciarApp() {
+    btnSubmit.disabled = false;
+  }
+  
+  function validarFormulario(e){
+    console.log("Evento submit capturado");
+    e.preventDefault();
+  
+    var nombreIp = document.querySelector("#nombreIp").value;
+    var urlPrincipal = document.querySelector("#urlPrincipal").value;
+    var errorMessage = "El Nombre Ip no es Valido";
+    
+    if(nombreIp.trim() == null || nombreIp.length == 0){
+      if (spanurlConcatIp.style.display = "block") {
+        spanurlConcatIp.style.display = "none";
+        alert(errorMessage);
+        document.querySelector("#error_nombreIp").innerHTML = errorMessage;
+        document.querySelector("#error_nombreIp").style.display = "block";
+        return false;
+      }
+    } else {
+      document.querySelector("#error_nombreIp").style.display = "none";
+    }
+  
+    // Mostrar Spinner
+    const spinner = document.querySelector("#spinner");
+    spinner.style.display = "block";
+  
+    // Despues de 2 segundos Ocultar el Spinner y mostrar el Mensaje
+    setTimeout( () => {
+      spinner.style.display = "none";
+      spanurlConcatIp.style.display = "block";
+      var urlConcatIp = urlPrincipal + nombreIp;		
+      var p_urlConcatIp = document.querySelector("#urlConcatIp span");		
+      p_urlConcatIp.innerHTML = urlConcatIp;
+    }, 2000);
+  
+    // Set Timeout para Resetear el formulario
+    setTimeout( () => {
+      resetearFormulario();
+    }, 20000 );
+  };
+  
+  // Resetear el formulario
+  function resetearFormulario() {
+    formulario.reset();
+    spanurlConcatIp.style.display = "none";
+    document.querySelector("#error_nombreIp").style.display = "none"; 
+  }
+  
+  
+  // Validar Campo Solo enteros
+  function soloenteros(e){
+    key=e.keyCode || e.which;  
+    teclado=String.fromCharCode(key);  
+    numeros="0123456789.";  
+    especiales="8-37-38-46"; // Array. Caracteres que queremos que se ejecuten: 8 Tecla BackSpace, 37 Flecha para la Izquierda, 38 Flecha para la Derecha, 46 Tecla Suprimir 
+    teclado_especial=false;
+    for(var i in especiales){
+      if(key==especiales[i]){
+      teclado_especial=true;
+      break;
+      }
+    }
+    if(numeros.indexOf(teclado)==-1 && !teclado_especial){
+      return false;
+    }
+  }
+  </script>
+
+</body>
+</html>
